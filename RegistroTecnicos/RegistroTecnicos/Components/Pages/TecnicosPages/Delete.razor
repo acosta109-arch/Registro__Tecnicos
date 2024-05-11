@@ -6,7 +6,7 @@
 @inject NavigationManager navigation
 
 <PageTitle>Eliminar t&eacute;cnicos</PageTitle>
-<EditForm Model="tecnicoId" OnValidSubmit="EliminarTecnico">
+<EditForm Model="tecnico" OnValidSubmit="EliminarTecnico">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow-lg">
@@ -19,13 +19,13 @@
                 <h5><strong>¿Éstas seguro de que quieres eliminar este t&eacute;cnico?</strong></h5>
                 @*Datos*@
                 <div class="mb-1">
-                    <p class="mb-0">T&eacute;cnicoId: @tecnicoId.TecnicosId</p>
+                    <p class="mb-0">T&eacute;cnicoId: @tecnico.TecnicosId</p>
                 </div>
                 <div class="mb-1">
-                    <p class="mb-0">Nombres: @tecnicoId.Nombres</p>
+                    <p class="mb-0">Nombres: @tecnico.Nombres</p>
                 </div>
                 <div class="mb-1">
-                    <p class="mb-0">Sueldo por hora: @tecnicoId.SueldoHora</p>
+                    <p class="mb-0">Sueldo por hora: @tecnico.SueldoHora</p>
                 </div>
             </div>
             @*Footer*@
@@ -40,18 +40,18 @@
 @code {
     [Parameter]
     public int tecnicosId { get; set; }
-    public Tecnicos tecnicoId { get; set; } = new Tecnicos();
+    public Tecnicos tecnico { get; set; } = new Tecnicos();
     public string? mensaje { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         if (tecnicosId > 0)
-            tecnicoId = (await tecnicoService.Buscar(tecnicosId))!;
+            tecnico = (await tecnicoService.Buscar(tecnicosId))!;
     }
 
     public async Task EliminarTecnico()
     {
-        var eliminar = await tecnicoService.Eliminar(tecnicoId.TecnicosId);
+        var eliminar = await tecnicoService.Eliminar(tecnico.TecnicosId);
         if (eliminar)
         {
             mensaje = "El técnico se eliminó con éxito.";
