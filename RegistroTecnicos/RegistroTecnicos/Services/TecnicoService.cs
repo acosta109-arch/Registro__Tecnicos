@@ -62,4 +62,5 @@ public class TecnicoService
     {
         return await _contexto.tecnicos.AnyAsync(t => t.Nombres.ToLower() == nombre.ToLower());
     }
+
 }
