@@ -35,24 +35,34 @@
             </div>
         </div>
     </div>
+    @Mensaje
 </EditForm>
+
 @code {
     public Tecnicos tecnico { get; set; } = new Tecnicos();
     public bool NombreRepetido { get; set; }
+    public string Mensaje { get; set; }
 
     public async Task Crear()
     {
-        if (!NombreRepetido)
+        if (! await Validar())
         {
             await tecnicoService.Guardar(tecnico);
+            Mensaje = "Técnico guardado correctamente";
             tecnico = new Tecnicos();
+        }
+        else
+        {
+            Mensaje = "Ya existe un técnico con ese nombre.";
         }
     }
 
-    public async Task Validar()
+    public async Task<bool> Validar()
     {
-        var existeTecnico = await tecnicoService.ExisteTecnicoConNombre(tecnico.Nombres);
-        NombreRepetido = existeTecnico;
+        var existeTecnico = await tecnicoService.BuscarNombres(tecnico.Nombres);
+        NombreRepetido = existeTecnico != null;
+        return NombreRepetido;
+
     }
 
     public void Volver()

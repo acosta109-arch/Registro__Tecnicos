@@ -36,13 +36,15 @@
             </div>
         </div>
     </div>
+    @Mensaje
 </EditForm>
 
 @code {
     [Parameter]
     public int tecnicosId { get; set; }
     public Tecnicos tecnico { get; set; } = new Tecnicos();
-    public string mensaje { get; set; }
+    public string Mensaje { get; set; }
+    public bool NombreRepetido { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,17 +55,24 @@
 
     public async Task Modificar()
     {
-        var modificar = await tecnicoService.Guardar(tecnico);
-        if (modificar)
+        if(! await Validar())
         {
-            mensaje = "El técnico se modificó con éxito.";
+            await tecnicoService.Guardar(tecnico);
+            Mensaje = "Técnico modificado correctamente.";
+            tecnico = new Tecnicos();
         }
         else
         {
-            mensaje = "El técnico no se ha podido modificar correctamente.";
+            Mensaje = "Ya existe un técnico con ese nombre.";
         }
     }
 
+    public async Task<bool> Validar()
+    {
+        var existeTecnico = await tecnicoService.BuscarNombres(tecnico.Nombres);
+        NombreRepetido = existeTecnico != null;
+        return NombreRepetido;
+    }
     public void Volver()
     {
         navigation.NavigateTo("/Index");
