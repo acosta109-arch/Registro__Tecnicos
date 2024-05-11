@@ -31,19 +31,28 @@
             @*Footer*@
             <div class="card-footer">
                 <button type="button" class="btn btn-secondary bi bi-arrow-left" @onclick="Volver">Volver</button>
-                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Crear</button>
+                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Guardar</button>
             </div>
         </div>
     </div>
 </EditForm>
 @code {
     public Tecnicos tecnico { get; set; } = new Tecnicos();
+    public bool NombreRepetido { get; set; }
 
     public async Task Crear()
     {
-        await tecnicoService.Guardar(tecnico);
-        tecnico = new Tecnicos();
+        if (!NombreRepetido)
+        {
+            await tecnicoService.Guardar(tecnico);
+            tecnico = new Tecnicos();
+        }
+    }
 
+    public async Task Validar()
+    {
+        var existeTecnico = await tecnicoService.ExisteTecnicoConNombre(tecnico.Nombres);
+        NombreRepetido = existeTecnico;
     }
 
     public void Volver()
