@@ -1,0 +1,62 @@
+﻿@page "/Index"
+@rendermode InteractiveServer
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>T&eacute;cnicos</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header">
+            <h3><strong>T&eacute;cnicos</strong></h3>
+        </div>
+        <div>
+            <a href="/Create" class="btn btn-success bi bi-plus-circle-fill">  Crear</a>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <table class="table table-light">
+                <thead>
+                    <tr>
+                        <th>T&eacute;cnicosId</th>
+                        <th>Nombres</th>
+                        <th>Sueldo por hora</th>
+                        <th>Detalles</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var tecnico in tecnicos)
+                    {
+                        <tr>
+                            <td>@tecnico.TecnicosId</td>
+                            <td>@tecnico.Nombres</td>
+                            <td>@tecnico.SueldoHora.ToString("N2")</td>
+                            <td class="text-center">
+                                <a href="/Detailss/@tecnico.TecnicosId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
+                            </td>
+                            <td class="text-center">
+                               <a href="/Edit/@tecnico.TecnicosId" class="btn btn-secondary bi bi-pencil-fill">  Modificar</a>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="/Delete/@tecnico.TecnicosId" class="btn btn-danger bi bi-trash-fill">  Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@code {
+    public List<Tecnicos> tecnicos = new List<Tecnicos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        tecnicos = await tecnicoService.Listar(t => t.TecnicosId > 0);
+    }
+
+}
