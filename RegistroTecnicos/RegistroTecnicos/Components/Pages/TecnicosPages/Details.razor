@@ -1,0 +1,60 @@
+﻿@page "/Detailss"
+@page "/Detailss/{tecnicosId:int}"
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Detalles de los t&eacute;cnicos</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header">
+            <h3><strong>Detalles de t&eacute;cnicos</strong></h3>
+            <a href="/Index" class="btn btn-primary bi bi-arrow-left">  Volver</a>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>T&eacute;cnicoId</th>
+                        <th>Nombres</th>
+                        <th>Sueldo por hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tecnico in tecnicos)
+                    {
+                        <tr>
+                            <td>@tecnico.TecnicosId</td>
+                            <td>@tecnico.Nombres</td>
+                            <td>@tecnico.SueldoHora.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @*Footer*@
+        <div class="card-footer">
+            <p><strong>Total de t&eacute;cnicos:</strong>@tecnicos.Count</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int tecnicosId { get; set; }
+    public List<Tecnicos> tecnicos = new List<Tecnicos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        tecnicos = await tecnicoService.Listar(p => p.TecnicosId > 0);
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Index");
+    }
+}
+
