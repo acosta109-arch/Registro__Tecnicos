@@ -1,0 +1,73 @@
+﻿@page "/Delete"
+@page "/Delete/{tecnicosId:int}"
+
+@inject TecnicoService tecnicoService
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+
+<PageTitle>Eliminar t&eacute;cnicos</PageTitle>
+<EditForm Model="tecnicoId" OnValidSubmit="EliminarTecnico">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header">
+                <h3><strong>Eliminar t&eacute;cnico</strong></h3>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                <h5><strong>¿Éstas seguro de que quieres eliminar este t&eacute;cnico?</strong></h5>
+                @*Datos*@
+                <div class="mb-1">
+                    <p class="mb-0">T&eacute;cnicoId: @tecnicoId.TecnicosId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Nombres: @tecnicoId.Nombres</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Sueldo por hora: @tecnicoId.SueldoHora</p>
+                </div>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-dark bi bi-arrow-left" @onclick="Volver">  Volver</button>
+                <button type="button" class="btn btn-danger bi bi-trash-fill" @onclick="EliminarTecnico">  Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int tecnicosId { get; set; }
+    public Tecnicos tecnicoId { get; set; } = new Tecnicos();
+    public string? mensaje { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (tecnicosId > 0)
+            tecnicoId = (await tecnicoService.Buscar(tecnicosId))!;
+    }
+
+    public async Task EliminarTecnico()
+    {
+        var eliminar = await tecnicoService.Eliminar(tecnicoId.TecnicosId);
+        if (eliminar)
+        {
+            mensaje = "El técnico se eliminó con éxito.";
+            await Task.Delay(500);
+            Volver();
+        }
+        else
+        {
+            mensaje = "El técnico no se ha podido eliminar correctamente.";
+        }
+
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Index");
+    }
+}
+
