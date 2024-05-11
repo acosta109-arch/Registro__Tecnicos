@@ -1,0 +1,53 @@
+﻿@page "/Create"
+@rendermode InteractiveServer
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Guardar nuevo t&eacute;cnico</PageTitle>
+<EditForm Model="tecnico" OnValidSubmit="Crear">
+    <DataAnnotationsValidator/>
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header">
+                <h2><strong>Crear nuevo t&eacute;cnico</strong></h2>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                @*Id*@
+                <label class="form-label" for="id"><strong>T&eacute;cnicoId</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="tecnico.TecnicosId" READONLY></InputNumber>
+
+                @*Nombres*@
+                <label class="form-label" for="nombres"><strong>Nombres</strong></label>
+                <InputText id="nombres" class="form-control" @bind-Value="tecnico.Nombres"></InputText>
+                <ValidationMessage For="@(()=> tecnico.Nombres)"></ValidationMessage>
+
+                @*SueldoHora*@
+                <label class="form-label" for="sueldo"><strong>Sueldo por hora</strong></label>
+                <InputNumber id="sueldo" class="form-control" @bind-Value="tecnico.SueldoHora"></InputNumber>
+                <ValidationMessage For="@(()=> tecnico.SueldoHora)"></ValidationMessage>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary bi bi-arrow-left" @onclick="Volver">Volver</button>
+                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Crear</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    public Tecnicos tecnico { get; set; } = new Tecnicos();
+
+    public async Task Crear()
+    {
+        await tecnicoService.Guardar(tecnico);
+        tecnico = new Tecnicos();
+
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Index");
+    }
+}
