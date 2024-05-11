@@ -58,4 +58,8 @@ public class TecnicoService
             .Where(criterio)
             .ToList();
     }
+    public async Task<bool> ExisteTecnicoConNombre(string nombre)
+    {
+        return await _contexto.tecnicos.AnyAsync(t => t.Nombres.ToLower() == nombre.ToLower());
+    }
 }
