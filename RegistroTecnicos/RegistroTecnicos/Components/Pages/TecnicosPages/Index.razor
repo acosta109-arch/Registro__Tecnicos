@@ -30,18 +30,18 @@
                     @foreach(var tecnico in tecnicos)
                     {
                         <tr>
-                            <td>@tecnico.TecnicosId</td>
+                            <td>@tecnico.TecnicoId</td>
                             <td>@tecnico.Nombres</td>
                             <td>@tecnico.SueldoHora.ToString("N2")</td>
                             <td class="text-center">
-                                <a href="/Detailss/@tecnico.TecnicosId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
+                                <a href="/Detailss/@tecnico.TecnicoId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
                             </td>
                             <td class="text-center">
-                               <a href="/Edit/@tecnico.TecnicosId" class="btn btn-secondary bi bi-pencil-fill">  Modificar</a>
+                               <a href="/Edit/@tecnico.TecnicoId" class="btn btn-secondary bi bi-pencil-fill">  Modificar</a>
                             </td>
 
                             <td class="text-center">
-                                <a href="/Delete/@tecnico.TecnicosId" class="btn btn-danger bi bi-trash-fill">  Eliminar</a>
+                                <a href="/Delete/@tecnico.TecnicoId" class="btn btn-danger bi bi-trash-fill">  Eliminar</a>
                             </td>
                         </tr>
                     }
@@ -55,8 +55,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(500);
-        tecnicos = await tecnicoService.Listar(t => t.TecnicosId > 0);
+        tecnicos = await tecnicoService.Listar(t => t.TecnicoId > 0);
     }
 
 }
