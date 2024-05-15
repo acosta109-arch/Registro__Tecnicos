@@ -5,7 +5,7 @@ namespace RegistroTecnicos.Models;
 public class Tecnicos
 {
     [Key]
-    public int TecnicosId { get; set; }
+    public int TecnicoId { get; set; }
 
     [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage ="Favor de introducir el nombre del técnico.")]
     public string Nombres { get; set; }

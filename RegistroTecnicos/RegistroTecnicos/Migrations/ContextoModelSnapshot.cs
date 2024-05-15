@@ -18,7 +18,7 @@ namespace RegistroTecnicos.Migrations
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
-                    b.Property<int>("TecnicosId")
+                    b.Property<int>("TecnicoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -29,9 +29,9 @@ namespace RegistroTecnicos.Migrations
                     b.Property<decimal>("SueldoHora")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("TecnicosId");
+                    b.HasKey("TecnicoId");
 
-                    b.ToTable("tecnicos");
+                    b.ToTable("Tecnicos");
                 });
 #pragma warning restore 612, 618
         }
