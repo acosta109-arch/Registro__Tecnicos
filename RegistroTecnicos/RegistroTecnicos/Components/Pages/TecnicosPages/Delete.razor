@@ -16,10 +16,10 @@
             </div>
             @*Body*@
             <div class="card-body">
-                <h5><strong>¿Éstas seguro de que quieres eliminar este t&eacute;cnico?</strong></h5>
+                <h5><strong>¿&Eacute;stas seguro de que quieres eliminar este t&eacute;cnico?</strong></h5>
                 @*Datos*@
                 <div class="mb-1">
-                    <p class="mb-0">T&eacute;cnicoId: @tecnico.TecnicosId</p>
+                    <p class="mb-0">T&eacute;cnicoId: @tecnico.TecnicoId</p>
                 </div>
                 <div class="mb-1">
                     <p class="mb-0">Nombres: @tecnico.Nombres</p>
@@ -51,7 +51,7 @@
 
     public async Task EliminarTecnico()
     {
-        var eliminar = await tecnicoService.Eliminar(tecnico.TecnicosId);
+        var eliminar = await tecnicoService.Eliminar(tecnico.TecnicoId);
         if (eliminar)
         {
             mensaje = "El técnico se eliminó con éxito.";
