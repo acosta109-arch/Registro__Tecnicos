@@ -17,7 +17,7 @@
             <div class="card-body">
                 @*Id*@
                 <label class="form-label" for="id"><strong>T&eacute;cnicoId</strong></label>
-                <InputNumber id="id" class="form-control" @bind-Value="tecnico.TecnicosId"READONLY></InputNumber>
+                <InputNumber id="id" class="form-control" @bind-Value="tecnico.TecnicoId"READONLY></InputNumber>
 
                 @*Nombres*@
                 <label class="form-label" for="nombres"><strong>Nombres</strong></label>
@@ -69,7 +69,7 @@
 
     public async Task<bool> Validar()
     {
-        var existeTecnico = await tecnicoService.BuscarNombres(tecnico.Nombres);
+        var existeTecnico = await tecnicoService.ExisteTecnicoConNombre(tecnico.Nombres);
         NombreRepetido = existeTecnico != null;
         return NombreRepetido;
     }
