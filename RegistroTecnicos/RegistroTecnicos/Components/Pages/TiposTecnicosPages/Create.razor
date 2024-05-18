@@ -1,0 +1,63 @@
+﻿@page "/CreateTipoTecnico"
+@rendermode InteractiveServer
+@inject TiposTecnicoService tiposTecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Crear nuevo tipo de t&eacute;cnico</PageTitle>
+<EditForm Model="tecnico" OnValidSubmit="Crear">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header bg-primary text-white">
+                <h2><strong>Crear nuevo tipo de t&eacute;cnico</strong></h2>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                @*Id*@
+                <label class="form-label" for="id"><strong>TipoId</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="tecnico.TipoId" readonly></InputNumber>
+
+                @*Nombres*@
+                <label class="form-label" for="descripcion"><strong>Descripci&oacute;n</strong></label>
+                <InputText id="nombres" class="form-control" @bind-Value="tecnico.Descripcion"></InputText>
+                <ValidationMessage For="@(() => tecnico.Descripcion)"></ValidationMessage>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary bi bi-arrow-left" @onclick="Volver">Volver</button>
+                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Guardar</button>
+            </div>
+        </div>
+    </div>
+    <p>@Mensaje</p>
+</EditForm>
+
+@code {
+    public TiposTecnicos tecnico { get; set; } = new TiposTecnicos();
+    public string Mensaje { get; set; }
+
+    public async Task Crear()
+    {
+        if (!await Validar())
+        {
+            await tiposTecnicoService.Guardar(tecnico);
+            Mensaje = "Tipo de técnico guardado correctamente.";
+            tecnico = new TiposTecnicos();
+        }
+        else
+        {
+            Mensaje = "Ya existe un tipo de técnico con esa descripción.";
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        return await tiposTecnicoService.ExisteTipoTecnicoDescripcion(tecnico.Descripcion);
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/IndexTipoTecnico");
+    }
+}
