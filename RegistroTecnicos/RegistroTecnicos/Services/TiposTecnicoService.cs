@@ -64,4 +64,5 @@ public class TiposTecnicoService
         return await _contexto.TiposTecnicos.AnyAsync(t => t.Descripcion == descripcion);
     }
 
+
 }
