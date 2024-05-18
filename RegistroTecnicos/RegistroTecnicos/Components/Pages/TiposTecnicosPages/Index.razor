@@ -1,0 +1,105 @@
+﻿@page "/IndexTipoTecnico"
+@rendermode InteractiveServer
+@inject TiposTecnicoService tiposTecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Tipos de técnico</PageTitle>
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header bg-primary text-white">
+            <h3><strong>Tipos de técnico</strong></h3>
+        </div>
+        <div class="row mb-3 align-items-end">
+            <div class="col-md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="id">TipoID</option>
+                    <option value="tecnico">Descripción</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="/CreateTipoTecnico" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
+            </div>
+        </div>
+
+        @*Body*@
+        <div class="card-body">
+            <table class="table table-light">
+                <thead>
+                    <tr>
+                        <th>TipoId</th>
+                        <th>Descripción</th>
+                        <th>Detalles</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tecnico in tecnicosFiltrados)
+                    {
+                        <tr>
+                            <td>@tecnico.TipoId</td>
+                            <td>@tecnico.Descripcion</td>
+                            <td class="text-center">
+                                <a href="/DetailssTipoTecnico/@tecnico.TipoId" class="btn btn-primary bi bi-binoculars-fill"> Detalles</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/EditTipoTecnico/@tecnico.TipoId" class="btn btn-secondary bi bi-pencil-fill"> Modificar</a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/DeleteTipoTecnico/@tecnico.TipoId" class="btn btn-danger bi bi-trash-fill"> Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<TiposTecnicos> tecnicos = new List<TiposTecnicos>();
+    public List<TiposTecnicos> tecnicosFiltrados = new List<TiposTecnicos>();
+    public string filtro { get; set; } = "id";
+    public string valorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tecnicos = await tiposTecnicoService.Listar(t => t.TipoId > 0);
+        tecnicosFiltrados = tecnicos;
+    }
+
+    private void Buscar()
+    {
+        if (string.IsNullOrEmpty(valorFiltro))
+        {
+            tecnicosFiltrados = tecnicos;
+        }
+        else
+        {
+            switch (filtro)
+            {
+                case "id":
+                    if (int.TryParse(valorFiltro, out int id))
+                    {
+                        tecnicosFiltrados = tecnicos.Where(t => t.TipoId == id).ToList();
+                    }
+                    break;
+                case "tecnico":
+                    tecnicosFiltrados = tecnicos.Where(t => t.Descripcion.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase)).ToList();
+                    break;
+            }
+        }
+    }
+}
