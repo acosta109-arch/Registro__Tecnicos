@@ -1,5 +1,5 @@
-﻿@page "/Delete"
-@page "/Delete/{tecnicosId:int}"
+﻿@page "/DeleteTecnico"
+@page "/DeleteTecnico/{tecnicosId:int}"
 
 @inject TecnicoService tecnicoService
 @rendermode InteractiveServer
@@ -11,7 +11,7 @@
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h3><strong>Eliminar t&eacute;cnico</strong></h3>
             </div>
             @*Body*@
@@ -67,7 +67,7 @@
 
     public void Volver()
     {
-        navigation.NavigateTo("/Index");
+        navigation.NavigateTo("/IndexTecnico");
     }
 }
 

@@ -1,11 +1,11 @@
-﻿@page "/Create"
+﻿@page "/CreateTecnico"
 @rendermode InteractiveServer
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigation
 
 <PageTitle>Guardar nuevo t&eacute;cnico</PageTitle>
 <EditForm Model="tecnico" OnValidSubmit="Crear">
-    <DataAnnotationsValidator/>
+    <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
@@ -45,7 +45,7 @@
 
     public async Task Crear()
     {
-        if (! await Validar())
+        if (!await Validar())
         {
             await tecnicoService.Guardar(tecnico);
             Mensaje = "Técnico guardado correctamente";
@@ -60,12 +60,12 @@
     public async Task<bool> Validar()
     {
         var existeTecnico = await tecnicoService.ExisteTecnicoConNombre(tecnico.Nombres);
-        return existeTecnico != null;
-
+        return existeTecnico == null;
     }
+
 
     public void Volver()
     {
-        navigation.NavigateTo("/Index");
+        navigation.NavigateTo("/IndexTecnico");
     }
 }

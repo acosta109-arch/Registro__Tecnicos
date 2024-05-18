@@ -1,5 +1,5 @@
-﻿@page "/Edit"
-@page "/Edit/{tecnicosId:int}"
+﻿@page "/EditTecnico"
+@page "/EditTecnico/{tecnicosId:int}"
 @rendermode InteractiveServer
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigation
@@ -10,7 +10,7 @@
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h2><strong>Modificar t&eacute;cnico</strong></h2>
             </div>
             @*Body*@
@@ -75,6 +75,6 @@
     }
     public void Volver()
     {
-        navigation.NavigateTo("/Index");
+        navigation.NavigateTo("/IndexTecnico");
     }
 }
