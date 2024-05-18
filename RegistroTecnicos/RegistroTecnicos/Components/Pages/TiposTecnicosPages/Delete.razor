@@ -1,0 +1,70 @@
+﻿@page "/DeleteTipoTecnico"
+@page "/DeleteTipoTecnico/{tecnicosId:int}"
+
+@inject TiposTecnicoService tecnicoService
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+
+<PageTitle>Eliminar tipo de t&eacute;cnico</PageTitle>
+<EditForm Model="tecnico" OnValidSubmit="EliminarTecnico">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header bg-primary text-white">
+                <h3><strong>Eliminar tipo de t&eacute;cnico</strong></h3>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                <h5><strong>¿&Eacute;stas seguro de que quieres eliminar este tipo de t&eacute;cnico?</strong></h5>
+                @*Datos*@
+                <div class="mb-1">
+                    <p class="mb-0">TipoId: @tecnico.TipoId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Descripci&oacute;n: @tecnico.Descripcion</p>
+                </div>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-dark bi bi-arrow-left" @onclick="Volver">  Volver</button>
+                <button type="button" class="btn btn-danger bi bi-trash-fill" @onclick="EliminarTecnico">  Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int tecnicosId { get; set; }
+    public TiposTecnicos tecnico { get; set; } = new TiposTecnicos();
+    public string? mensaje { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (tecnicosId > 0)
+            tecnico = (await tecnicoService.Buscar(tecnicosId))!;
+    }
+
+    public async Task EliminarTecnico()
+    {
+        var eliminar = await tecnicoService.Eliminar(tecnico.TipoId);
+        if (eliminar)
+        {
+            mensaje = "El tipo de técnico se eliminó con éxito.";
+            await Task.Delay(500);
+            Volver();
+        }
+        else
+        {
+            mensaje = "El tipo de técnico no se ha podido eliminar correctamente.";
+        }
+
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/IndexTipoTecnico");
+    }
+}
+
