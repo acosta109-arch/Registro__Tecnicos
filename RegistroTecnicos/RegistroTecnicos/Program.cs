@@ -21,6 +21,7 @@ namespace RegistroTecnicos
 
             //Inyeccción del service
             builder.Services.AddScoped<TecnicoService>();
+            builder.Services.AddScoped<TiposTecnicoService>();
 
             var app = builder.Build();
 
