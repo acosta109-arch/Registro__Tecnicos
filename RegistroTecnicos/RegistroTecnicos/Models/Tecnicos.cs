@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RegistroTecnicos.Models;
 
@@ -13,4 +15,9 @@ public class Tecnicos
     [Required(ErrorMessage = "Favor de introducir el sueldo por hora del técnico.")]
     [Range(0,200000, ErrorMessage ="Favor de introducir un sueldo mayor que 1 y menor que 200000.")]
     public decimal SueldoHora { get; set; }
+
+    [ForeignKey("TipoId")]
+    public int TipoId { get; set; }
+
+
 }
