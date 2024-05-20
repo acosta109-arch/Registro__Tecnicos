@@ -1,6 +1,8 @@
-﻿@page "/IndexTecnico"
+﻿﻿
+@page "/IndexTecnico"
 @rendermode InteractiveServer
 @inject TecnicoService tecnicoService
+@inject TiposTecnicoService TecnicosS
 @inject NavigationManager navigation
 
 <PageTitle>T&eacute;cnicos</PageTitle>
@@ -38,6 +40,7 @@
                     <tr>
                         <th>T&eacute;cnicosId</th>
                         <th>Nombres</th>
+                        <th>TipoId</th>
                         <th>Sueldo por hora</th>
                         <th>Detalles</th>
                         <th>Modificar</th>
@@ -47,9 +50,12 @@
                 <tbody>
                     @foreach(var tecnico in tecnicos)
                     {
+                        var tipoTecnico = TecnicosList.FirstOrDefault(tp => tp.TipoId == tecnico.TipoId);
+
                         <tr>
                             <td>@tecnico.TecnicoId</td>
                             <td>@tecnico.Nombres</td>
+                            <td>@(tipoTecnico != null ? tipoTecnico.TipoId : "No encontrado")</td>
                             <td>@tecnico.SueldoHora.ToString("N2")</td>
                             <td class="text-center">
                                 <a href="/DetailssTecnico/@tecnico.TecnicoId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
@@ -71,12 +77,14 @@
 @code {
     public List<Tecnicos> tecnicos = new List<Tecnicos>();
     public List<Tecnicos> tecnicosFiltrados = new List<Tecnicos>();
+    public List<TiposTecnicos> TecnicosList = new List<TiposTecnicos>();
     public string filtro { get; set; } = "id";
     public string valorFiltro { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         tecnicos = await tecnicoService.Listar(t => t.TecnicoId > 0);
+        TecnicosList = await TecnicosS.Listar(p => true);
         tecnicosFiltrados = tecnicos;
     }
 
