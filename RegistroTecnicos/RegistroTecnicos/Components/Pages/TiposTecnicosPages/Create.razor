@@ -1,4 +1,4 @@
-﻿@page "/CreateTipoTecnico"
+﻿@page "/TipoTecnico/Create"
 @rendermode InteractiveServer
 @inject TiposTecnicoService tiposTecnicoService
 @inject NavigationManager navigation
@@ -6,6 +6,7 @@
 <PageTitle>Crear nuevo tipo de t&eacute;cnico</PageTitle>
 <EditForm Model="tecnico" OnValidSubmit="Crear">
     <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
@@ -18,7 +19,7 @@
                 <label class="form-label" for="id"><strong>TipoId</strong></label>
                 <InputNumber id="id" class="form-control" @bind-Value="tecnico.TipoId" readonly></InputNumber>
 
-                @*Nombres*@
+                @*Descripcion*@
                 <label class="form-label" for="descripcion"><strong>Descripci&oacute;n</strong></label>
                 <InputText id="nombres" class="form-control" @bind-Value="tecnico.Descripcion"></InputText>
                 <ValidationMessage For="@(() => tecnico.Descripcion)"></ValidationMessage>
@@ -30,24 +31,37 @@
             </div>
         </div>
     </div>
-    <p>@Mensaje</p>
 </EditForm>
 
 @code {
     public TiposTecnicos tecnico { get; set; } = new TiposTecnicos();
-    public string Mensaje { get; set; }
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+    => new ToastMessage
+    {
+        Type = toastType,
+        Title = "Notificación",
+        HelpText = $"{DateTime.Now}",
+        Message = mensaje,
+    };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
 
     public async Task Crear()
     {
         if (!await Validar())
         {
             await tiposTecnicoService.Guardar(tecnico);
-            Mensaje = "Tipo de técnico guardado correctamente.";
+            Mensaje(ToastType.Success, "Tipo de técnico guardado correctamente.");
             tecnico = new TiposTecnicos();
         }
         else
         {
-            Mensaje = "Ya existe un tipo de técnico con esa descripción.";
+            Mensaje(ToastType.Danger, "Ya existe un tipo de técnico con esa descripción.");
         }
     }
 
@@ -58,6 +72,6 @@
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTipoTecnico");
+        navigation.NavigateTo("/TipoTecnico/Index");
     }
 }
