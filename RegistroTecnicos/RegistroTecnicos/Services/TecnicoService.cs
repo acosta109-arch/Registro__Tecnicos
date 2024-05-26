@@ -58,9 +58,21 @@ public class TecnicoService
             .Where(criterio)
             .ToList();
     }
-    public async Task<bool> ExisteTecnicoConNombre(string nombre)
+
+    public async Task<List<TiposTecnicos>> ListarTiposTecnicos()
     {
-        return await _contexto.Tecnicos.AnyAsync(t => t.Nombres.ToLower() == nombre.ToLower());
+        return await _contexto.Tecnicos
+            .AsNoTracking()
+            .Select(t => t.TipoTecnico) 
+            .Distinct() 
+            .ToListAsync();
+    }
+
+
+    public async Task<Tecnicos?> BuscarNombres(string nombre)
+    {
+        return await _contexto.Tecnicos.AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Nombres == nombre);
     }
 
 }
