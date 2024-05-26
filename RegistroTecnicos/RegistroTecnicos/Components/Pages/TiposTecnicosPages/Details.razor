@@ -1,5 +1,5 @@
-﻿@page "/DetailssTipoTecnico"
-@page "/DetailssTipoTecnico/{tecnicosId:int}"
+﻿@page "/TipoTecnico/Details"
+@page "/TipoTecnico/Details/{tecnicosId:int}"
 @inject TiposTecnicoService tecnicoService
 @inject NavigationManager navigation
 
@@ -47,6 +47,6 @@
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTipoTecnico");
+        navigation.NavigateTo("/TipoTecnico/Index");
     }
 }
