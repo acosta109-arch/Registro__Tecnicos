@@ -1,5 +1,5 @@
-﻿@page "/DeleteTipoTecnico"
-@page "/DeleteTipoTecnico/{tecnicosId:int}"
+﻿@page "/TipoTecnico/Delete"
+@page "/TipoTecnico/Delete/{tecnicosId:int}"
 
 @inject TiposTecnicoService tecnicoService
 @rendermode InteractiveServer
@@ -8,6 +8,7 @@
 <PageTitle>Eliminar tipo de t&eacute;cnico</PageTitle>
 <EditForm Model="tecnico" OnValidSubmit="EliminarTecnico">
     <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
@@ -16,7 +17,7 @@
             </div>
             @*Body*@
             <div class="card-body">
-                <h5><strong>¿&Eacute;stas seguro de que quieres eliminar este tipo de t&eacute;cnico?</strong></h5>
+                <h5><strong>¿Est&aacute;s seguro de que quieres eliminar este tipo de t&eacute;cnico?</strong></h5>
                 @*Datos*@
                 <div class="mb-1">
                     <p class="mb-0">TipoId: @tecnico.TipoId</p>
@@ -38,7 +39,7 @@
     [Parameter]
     public int tecnicosId { get; set; }
     public TiposTecnicos tecnico { get; set; } = new TiposTecnicos();
-    public string? mensaje { get; set; }
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,25 +47,39 @@
             tecnico = (await tecnicoService.Buscar(tecnicosId))!;
     }
 
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+   => new ToastMessage
+   {
+       Type = toastType,
+       Title = "Notificación",
+       HelpText = $"{DateTime.Now}",
+       Message = mensaje,
+   };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
+
     public async Task EliminarTecnico()
     {
         var eliminar = await tecnicoService.Eliminar(tecnico.TipoId);
         if (eliminar)
         {
-            mensaje = "El tipo de técnico se eliminó con éxito.";
-            await Task.Delay(500);
+            Mensaje(ToastType.Success, "Tipo de técnico eliminado correctamente.");
             Volver();
         }
         else
         {
-            mensaje = "El tipo de técnico no se ha podido eliminar correctamente.";
+            Mensaje(ToastType.Danger, "No se ha podido eliminar el tipo de técnico.");
         }
 
     }
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTipoTecnico");
+        navigation.NavigateTo("/TipoTecnico/Index");
     }
 }
 
