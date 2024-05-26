@@ -1,0 +1,63 @@
+﻿@page "/Incentivo/Details"
+@page "/Incentivo/Details/{incentivoId:int}"
+@inject IncentivoService incentivoService
+@inject NavigationManager navigation
+
+<PageTitle>Detalles del incentivo</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        @*Header*@
+        <div class="card-header bg-primary text-white">
+            <h3><strong>Detalles del incentivo</strong></h3>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <h5><strong>Estos son los detalles del incentivo</strong></h5>
+            @if (incentivo != null)
+            {
+                <div class="mb-1">
+                    <p class="mb-0">IncentivoId: @incentivo.IncentivoId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Fecha: @incentivo.Fecha.ToShortDateString()</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">TécnicoId: @incentivo.TecnicoId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Descripción: @incentivo.Descripcion</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Cantidad de Servicios: @incentivo.CantidadServicios</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Monto: @incentivo.Monto</p>
+                </div>
+            }
+            else
+            {
+                <p>No se encontró ningún incentivo con el ID especificado.</p>
+            }
+        </div>
+        @*Footer*@
+        <div class="card-footer">
+            <button type="button" class="btn btn-dark bi bi-arrow-left" @onclick="Volver">  Volver</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int incentivoId { get; set; }
+    public Incentivos incentivo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        incentivo = await incentivoService.Buscar(incentivoId);
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Incentivo/Index");
+    }
+}
