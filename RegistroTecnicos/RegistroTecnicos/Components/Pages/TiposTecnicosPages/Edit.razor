@@ -1,7 +1,7 @@
 ﻿@page "/TipoTecnico/Edit"
 @page "/TipoTecnico/Edit/{tecnicosId:int}"
 @rendermode InteractiveServer
-@inject TiposTecnicoService tecnicoService
+@inject TiposTecnicoService tiposTecnicoService
 @inject NavigationManager navigation
 
 <PageTitle>Modificar tipo de t&eacute;cnico</PageTitle>
@@ -47,7 +47,7 @@
     {
         await Task.Delay(500);
         if (tecnicosId > 0)
-            tecnico = await tecnicoService.Buscar(tecnicosId);
+            tecnico = await tiposTecnicoService.Buscar(tecnicosId);
     }
 
     private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
@@ -68,7 +68,7 @@
     {
         if(! await Validar())
         {
-            await tecnicoService.Guardar(tecnico);
+            await tiposTecnicoService.Guardar(tecnico);
             Mensaje(ToastType.Success, "Tipo de técnico modificado correctamente.");
             tecnico = new TiposTecnicos();
         }
@@ -80,7 +80,7 @@
 
     public async Task<bool> Validar()
     {
-        var existeTecnico = await tecnicoService.ExisteTipoTecnicoDescripcion(tecnico.Descripcion);
+        var existeTecnico = await tiposTecnicoService.ExisteTipoTecnicoDescripcion(tecnico.Descripcion);
         DescripcionRepetida = existeTecnico != null;
         return DescripcionRepetida;
     }
