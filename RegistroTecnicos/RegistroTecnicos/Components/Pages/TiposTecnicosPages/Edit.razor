@@ -1,5 +1,5 @@
-﻿@page "/EditTipoTecnico"
-@page "/EditTipoTecnico/{tecnicosId:int}"
+﻿@page "/TipoTecnico/Edit"
+@page "/TipoTecnico/Edit/{tecnicosId:int}"
 @rendermode InteractiveServer
 @inject TiposTecnicoService tecnicoService
 @inject NavigationManager navigation
@@ -7,6 +7,7 @@
 <PageTitle>Modificar tipo de t&eacute;cnico</PageTitle>
 <EditForm Model="tecnico" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
@@ -32,15 +33,15 @@
             </div>
         </div>
     </div>
-    @Mensaje
 </EditForm>
 
 @code {
     [Parameter]
     public int tecnicosId { get; set; }
     public TiposTecnicos tecnico { get; set; } = new TiposTecnicos();
-    public string Mensaje { get; set; }
     public bool DescripcionRepetida { get; set; }
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,17 +50,31 @@
             tecnico = await tecnicoService.Buscar(tecnicosId);
     }
 
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+   => new ToastMessage
+   {
+       Type = toastType,
+       Title = "Notificación",
+       HelpText = $"{DateTime.Now}",
+       Message = mensaje,
+   };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
     public async Task Modificar()
     {
         if(! await Validar())
         {
             await tecnicoService.Guardar(tecnico);
-            Mensaje = "Tipo de técnico modificado correctamente.";
+            Mensaje(ToastType.Success, "Tipo de técnico modificado correctamente.");
             tecnico = new TiposTecnicos();
         }
         else
         {
-            Mensaje = "Ya existe un tipo de técnico con esa descipción.";
+            Mensaje(ToastType.Danger, "¨Ya existe un tipo de técnico con esa descripción.");
         }
     }
 
@@ -72,6 +87,6 @@
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTipoTecnico");
+        navigation.NavigateTo("/TipoTecnico/Index");
     }
 }
