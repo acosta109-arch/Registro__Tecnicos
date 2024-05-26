@@ -1,0 +1,93 @@
+﻿@page "/Incentivo/Delete"
+@page "/Incentivo/Delete/{incentivosId:int}"
+
+@inject IncentivoService incentivoService
+@inject NavigationManager navigation
+
+<PageTitle>Eliminar incentivo</PageTitle>
+<EditForm Model="incentivo" OnValidSubmit="EliminarIncentivo">
+    <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header bg-primary text-white">
+                <h3><strong>Eliminar incentivo</strong></h3>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                <h5><strong>¿Est&aacute;s seguro de que quieres eliminar este incentivo?</strong></h5>
+                @*Datos*@
+                <div class="mb-1">
+                    <p class="mb-0">IncentivoId: @incentivo.IncentivoId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Fecha: @incentivo.Fecha.ToShortDateString()</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">TécnicoId: @incentivo.TecnicoId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Descripción: @incentivo.Descripcion</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Cantidad de Servicios: @incentivo.CantidadServicios</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Monto: @incentivo.Monto</p>
+                </div>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-dark bi bi-arrow-left" @onclick="Volver">  Volver</button>
+                <button type="submit" class="btn btn-danger bi bi-trash-fill" form="editForm">  Eliminar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int incentivosId { get; set; }
+    public Incentivos incentivo { get; set; } = new Incentivos();
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (incentivosId > 0)
+            incentivo = (await incentivoService.Buscar(incentivosId))!;
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+        => new ToastMessage
+            {
+                Type = toastType,
+                Title = "Notificación",
+                HelpText = $"{DateTime.Now}",
+                Message = mensaje,
+            };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
+    public async Task EliminarIncentivo()
+    {
+        var eliminar = await incentivoService.Eliminar(incentivo.IncentivoId);
+        if (eliminar)
+        {
+            Mensaje(ToastType.Success, "Incentivo eliminado correctamente.");
+            Volver();
+        }
+        else
+        {
+            Mensaje(ToastType.Danger, "El incentivo no se ha podido eliminar.");
+        }
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Incentivo/Index");
+    }
+}
