@@ -1,26 +1,28 @@
-﻿@page "/IndexTipoTecnico"
+﻿@page "/TipoTecnico/Index"
 @rendermode InteractiveServer
 @inject TiposTecnicoService tiposTecnicoService
+@inject IncentivoService incentivoService
+@inject TecnicoService tecnicoService
 @inject NavigationManager navigation
 
-<PageTitle>Tipos de técnico</PageTitle>
-
+<PageTitle>Tipos de Técnico</PageTitle>
 <div class="container mt-5">
     <div class="card shadow-lg">
         @*Header*@
         <div class="card-header bg-primary text-white">
-            <h3><strong>Tipos de técnico</strong></h3>
+            <h3><strong>Tipos de Técnico</strong></h3>
         </div>
         <div class="row mb-3 align-items-end">
             <div class="col-md-3">
-                <label for="Filtro" class="form-label">Filtrar por:</label>
-                <select @bind="filtro" class="form-select">
-                    <option value="id">TipoID</option>
+                <label for="Filtro" class="form-label"><strong>Filtrar por:</strong></label>
+                <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                    <option value="" disabled>Seleccionar</option>
+                    <option value="id">TipoId</option>
                     <option value="tecnico">Descripción</option>
-                </select>
+                </InputSelect>
             </div>
             <div class="col-md-6">
-                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <label for="ValorFiltro" class="form-label"><strong>Búsqueda:</strong></label>
                 <div class="input-group">
                     <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
                     <button @onclick="Buscar" class="btn btn-primary" type="button">
@@ -28,8 +30,8 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-3 text-end">
-                <a href="/CreateTipoTecnico" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
+            <div class="text-left">
+                <a href="/TipoTecnico/Create" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
             </div>
         </div>
 
@@ -40,25 +42,27 @@
                     <tr>
                         <th>TipoId</th>
                         <th>Descripción</th>
+                        <th>Monto Total Incentivos</th>
                         <th>Detalles</th>
                         <th>Modificar</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var tecnico in tecnicosFiltrados)
+                    @foreach (var tipo in tiposFiltrados)
                     {
                         <tr>
-                            <td>@tecnico.TipoId</td>
-                            <td>@tecnico.Descripcion</td>
+                            <td>@tipo.TipoId</td>
+                            <td>@tipo.Descripcion</td>
+                            <td>@tipo.MontoIncentivos.ToString("N2")</td>
                             <td class="text-center">
-                                <a href="/DetailssTipoTecnico/@tecnico.TipoId" class="btn btn-primary bi bi-binoculars-fill"> Detalles</a>
+                                <a href="/TipoTecnico/Details/@tipo.TipoId" class="btn btn-primary bi bi-binoculars-fill"> Detalles</a>
                             </td>
                             <td class="text-center">
-                                <a href="/EditTipoTecnico/@tecnico.TipoId" class="btn btn-secondary bi bi-pencil-fill"> Modificar</a>
+                                <a href="/TipoTecnico/Edit/@tipo.TipoId" class="btn btn-secondary bi bi-pencil-fill"> Modificar</a>
                             </td>
                             <td class="text-center">
-                                <a href="/DeleteTipoTecnico/@tecnico.TipoId" class="btn btn-danger bi bi-trash-fill"> Eliminar</a>
+                                <a href="/TipoTecnico/Delete/@tipo.TipoId" class="btn btn-danger bi bi-trash-fill"> Eliminar</a>
                             </td>
                         </tr>
                     }
@@ -69,22 +73,33 @@
 </div>
 
 @code {
-    public List<TiposTecnicos> tecnicos = new List<TiposTecnicos>();
-    public List<TiposTecnicos> tecnicosFiltrados = new List<TiposTecnicos>();
+    public List<TiposTecnicos> tiposTecnico = new List<TiposTecnicos>();
+    public List<TiposTecnicos> tiposFiltrados = new List<TiposTecnicos>();
+    public List<Tecnicos> tecnicos = new List<Tecnicos>();
+    public List<Incentivos> incentivos = new List<Incentivos>();
     public string filtro { get; set; } = "id";
     public string valorFiltro { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        tecnicos = await tiposTecnicoService.Listar(t => t.TipoId > 0);
-        tecnicosFiltrados = tecnicos;
+        tiposTecnico = await tiposTecnicoService.Listar(t => true);
+        tecnicos = await tecnicoService.Listar(t => true);
+        incentivos = await incentivoService.Listar(t => true);
+
+        foreach (var tipo in tiposTecnico)
+        {
+            var tecnicosDelTipo = tecnicos.Where(t => t.TipoId == tipo.TipoId).Select(t => t.TecnicoId).ToList();
+            tipo.MontoIncentivos = incentivos.Where(i => tecnicosDelTipo.Contains(i.TecnicoId)).Sum(i => i.Monto);
+        }
+
+        tiposFiltrados = tiposTecnico;
     }
 
     private void Buscar()
     {
         if (string.IsNullOrEmpty(valorFiltro))
         {
-            tecnicosFiltrados = tecnicos;
+            tiposFiltrados = tiposTecnico;
         }
         else
         {
@@ -93,11 +108,11 @@
                 case "id":
                     if (int.TryParse(valorFiltro, out int id))
                     {
-                        tecnicosFiltrados = tecnicos.Where(t => t.TipoId == id).ToList();
+                        tiposFiltrados = tiposTecnico.Where(t => t.TipoId == id).ToList();
                     }
                     break;
                 case "tecnico":
-                    tecnicosFiltrados = tecnicos.Where(t => t.Descripcion.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase)).ToList();
+                    tiposFiltrados = tiposTecnico.Where(t => t.Descripcion.Contains(valorFiltro, StringComparison.OrdinalIgnoreCase)).ToList();
                     break;
             }
         }
