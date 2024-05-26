@@ -1,4 +1,4 @@
-﻿@page "/IndexTecnico"
+﻿@page "/Tecnico/Index"
 @rendermode InteractiveServer
 @inject TecnicoService tecnicoService
 @inject TiposTecnicoService tiposTecnicoService
@@ -33,7 +33,7 @@
             </div>
 
             <div class="text-left">
-                <a href="/CreateTecnico" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
+                <a href="/Tecnico/Create" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
             </div>
         </div>
         @*Body*@
@@ -60,13 +60,13 @@
                             <td>@tecnico.SueldoHora.ToString("N2")</td>
                             <td>@(tipoTecnico?.Descripcion ?? "N/A")</td>
                             <td class="text-center">
-                                <a href="/DetailssTecnico/@tecnico.TecnicoId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
+                                <a href="/Tecnico/Details/@tecnico.TecnicoId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
                             </td>
                             <td class="text-center">
-                                <a href="/EditTecnico/@tecnico.TecnicoId" class="btn btn-secondary bi bi-pencil-fill">  Modificar</a>
+                                <a href="/Tecnico/Edit/@tecnico.TecnicoId" class="btn btn-secondary bi bi-pencil-fill">  Modificar</a>
                             </td>
                             <td class="text-center">
-                                <a href="/DeleteTecnico/@tecnico.TecnicoId" class="btn btn-danger bi bi-trash-fill">  Eliminar</a>
+                                <a href="/Tecnico/Delete/@tecnico.TecnicoId" class="btn btn-danger bi bi-trash-fill">  Eliminar</a>
                             </td>
                         </tr>
                     }
