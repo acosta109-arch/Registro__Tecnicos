@@ -1,5 +1,5 @@
 ﻿﻿
-@page "/CreateTecnico"
+@page "/Tecnico/Create"
 @rendermode InteractiveServer
 @inject TecnicoService tecnicoService
 @inject TiposTecnicoService tiposTecnicoService
@@ -8,6 +8,7 @@
 <PageTitle>Guardar nuevo t&eacute;cnico</PageTitle>
 <EditForm Model="tecnico" OnValidSubmit="Crear">
     <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
     <div class="container">
         <div class="card shadow-lg">
             @*Header*@
@@ -35,9 +36,9 @@
                 <div>
                     <InputSelect @bind-Value="tecnico.TipoId" class="form-control">
                         <option value="0">Seleciona el tipo de t&eacute;cnico</option>
-                        @foreach (var item in ListaTipos)
+                        @foreach (var tipo in ListaTipos)
                         {
-                            <option value="@item.TipoId">@item.Descripcion</option>
+                            <option value="@tipo.TipoId">@tipo.Descripcion</option>
                         }
                     </InputSelect>
                 </div>
@@ -49,31 +50,46 @@
             </div>
         </div>
     </div>
-    @Mensaje
 </EditForm>
 
 @code {
     public Tecnicos tecnico { get; set; } = new Tecnicos();
     public List<TiposTecnicos> ListaTipos { get; set; } = new List<TiposTecnicos>();
     public bool NombreRepetido { get; set; }
-    public string Mensaje { get; set; }
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
 
     protected override async Task OnInitializedAsync()
     {
         ListaTipos = await tiposTecnicoService.Listar(t => true);
     }
 
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+    => new ToastMessage
+        {
+            Type = toastType,
+            Title = "Notificación",
+            HelpText = $"{DateTime.Now}",
+            Message = mensaje,
+        };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
+
     public async Task Crear()
     {
         if (!await Validar())
         {
             await tecnicoService.Guardar(tecnico);
-            Mensaje = "Técnico guardado correctamente";
+            Mensaje(ToastType.Success, "Técnico guardado correctamente.");
             tecnico = new Tecnicos();
         }
         else
         {
-            Mensaje = "Ya existe un técnico con ese nombre.";
+            Mensaje(ToastType.Danger, "Ya existe un técnico con ese nombre.");
         }
     }
 
@@ -86,6 +102,6 @@
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTecnico");
+        navigation.NavigateTo("/Tecnico/Index");
     }
 }
