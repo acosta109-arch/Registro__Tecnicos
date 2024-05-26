@@ -1,0 +1,124 @@
+﻿@page "/Incentivo/Edit"
+@page "/Incentivo/Edit/{incentivoId:int}"
+@rendermode InteractiveServer
+@inject IncentivoService incentivoService
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Modificar incentivo</PageTitle>
+<EditForm Model="incentivo" OnValidSubmit="Modificar">
+    <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header bg-primary text-white">
+                <h2><strong>Modificar incentivo</strong></h2>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                @*ID*@
+                <label class="form-label" for="id"><strong>IncentivoId</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="incentivo.IncentivoId" READONLY></InputNumber>
+
+                @*Fecha*@
+                <label class="form-label" for="fecha"><strong>Fecha</strong></label>
+                <InputDate id="fecha" class="form-control" @bind-Value="incentivo.Fecha"></InputDate>
+                <ValidationMessage For="@(() => incentivo.Fecha)"></ValidationMessage>
+
+                @*TecnicoId*@
+                <label class="form-label" for="tecnicoId"><strong>T&eacute;cnico</strong></label>
+                <InputSelect id="tecnicoId" class="form-control" @bind-Value="incentivo.TecnicoId">
+                    <option value="0">Seleccione un técnico</option>
+                    @foreach (var tecnico in ListaTecnicos)
+                    {
+                        <option value="@tecnico.TecnicoId">@tecnico.TecnicoId</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => incentivo.TecnicoId)"></ValidationMessage>
+
+                @*Descripción*@
+                <label class="form-label" for="descripcion"><strong>Descripci&oacute;n</strong></label>
+                <InputText id="descripcion" class="form-control" @bind-Value="incentivo.Descripcion"></InputText>
+                <ValidationMessage For="@(() => incentivo.Descripcion)"></ValidationMessage>
+
+                @*CantidadServicios*@
+                <label class="form-label" for="cantidadServicios"><strong>Cantidad de Servicios</strong></label>
+                <InputNumber id="cantidadServicios" class="form-control" @bind-Value="incentivo.CantidadServicios"></InputNumber>
+                <ValidationMessage For="@(() => incentivo.CantidadServicios)"></ValidationMessage>
+
+                @*Monto*@
+                <label class="form-label" for="monto"><strong>Monto</strong></label>
+                <InputNumber id="monto" class="form-control" @bind-Value="incentivo.Monto"></InputNumber>
+                <ValidationMessage For="@(() => incentivo.Monto)"></ValidationMessage>
+            </div>
+            @*Footer*@
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary bi bi-arrow-left" @onclick="Volver">  Volver</button>
+                <button type="submit" class="btn btn-success  bi bi-pencil-fill">  Modificar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int incentivoId { get; set; }
+    public Incentivos incentivo { get; set; } = new Incentivos();
+    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
+    public bool NombreRepetido { get; set; }
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
+    [Inject]
+    public TecnicoService TecnicoService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+
+        if (incentivoId > 0)
+        {
+            incentivo = await incentivoService.Buscar(incentivoId);
+        }
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+    => new ToastMessage
+    {
+        Type = toastType,
+        Title = "Notificación",
+        HelpText = $"{DateTime.Now}",
+        Message = mensaje,
+    };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
+    public async Task Modificar()
+    {
+        if (!await Validar())
+        {
+            await incentivoService.Guardar(incentivo);
+            Mensaje(ToastType.Success, "Incentivo modificado correctamente.");
+            incentivo = new Incentivos();
+        }
+        else
+        {
+            Mensaje(ToastType.Danger, "Ya existe un incentivo con esa descripción.");
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeIncentivo = await incentivoService.BuscarDescripcion(incentivo.Descripcion);
+        return existeIncentivo == null;
+    }
+
+    public void Volver()
+    {
+        navigation.NavigateTo("/Incentivo/Index");
+    }
+}
+
