@@ -19,5 +19,5 @@ public class TiposTecnicos
     public Incentivos Incentivo { get; set; }
 
     [NotMapped]
-    public decimal MontoIncentivos { get; set; }
+    public decimal MontoIncentivos { get; set; } 
 }
