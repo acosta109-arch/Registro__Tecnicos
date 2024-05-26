@@ -59,6 +59,15 @@ public class TiposTecnicoService
             .ToList();
     }
 
+    public async Task<List<TiposTecnicos>> ListarTiposTecnicos()
+    {
+        return await _contexto.Tecnicos
+            .AsNoTracking()
+            .Select(t => t.TipoTecnico)
+            .Distinct()
+            .ToListAsync();
+    }
+
     public async Task<bool> ExisteTipoTecnicoDescripcion(string descripcion)
     {
         return await _contexto.TiposTecnicos.AnyAsync(t => t.Descripcion == descripcion);
