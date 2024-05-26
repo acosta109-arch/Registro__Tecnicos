@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RegistroTecnicos.Components;
 using RegistroTecnicos.DAL;
+using RegistroTecnicos.Models;
 using RegistroTecnicos.Services;
 
 namespace RegistroTecnicos
@@ -18,10 +19,12 @@ namespace RegistroTecnicos
             //Inyeccción del contexto
             var ConStr = builder.Configuration.GetConnectionString("ConStr");
             builder.Services.AddDbContext<Contexto>(c => c.UseSqlite(ConStr));
+            builder.Services.AddBlazorBootstrap();
 
             //Inyeccción del service
             builder.Services.AddScoped<TecnicoService>();
             builder.Services.AddScoped<TiposTecnicoService>();
+            builder.Services.AddScoped<IncentivoService>();
 
             var app = builder.Build();
 
