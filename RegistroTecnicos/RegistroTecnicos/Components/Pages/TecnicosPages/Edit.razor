@@ -96,7 +96,7 @@
 
     public async Task<bool> Validar()
     {
-        var existeTecnico = await tecnicoService.ExisteTecnicoConNombre(tecnico.Nombres);
+        var existeTecnico = await tecnicoService.BuscarNombres(tecnico.Nombres);
 
         NombreRepetido = existeTecnico == null;
         return NombreRepetido;
