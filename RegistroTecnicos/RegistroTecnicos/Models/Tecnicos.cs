@@ -16,8 +16,11 @@ public class Tecnicos
     [Range(0,200000, ErrorMessage ="Favor de introducir un sueldo mayor que 1 y menor que 200000.")]
     public decimal SueldoHora { get; set; }
 
-    [ForeignKey("TipoId")]
+    [ForeignKey("TipoTecnico")]
+    [Required(ErrorMessage = "Selecionar un tipo")]
     public int TipoId { get; set; }
 
+    [ForeignKey("TipoId")]
+    public TiposTecnicos TipoTecnico { get; set; }
 
 }
