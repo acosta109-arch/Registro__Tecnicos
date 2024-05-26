@@ -1,8 +1,10 @@
-﻿@page "/DetailssTecnico/{tecnicosId:int}"
+﻿@page "/Tecnico/Details/"
+@page "/Tecnico/Details/{tecnicosId:int}"
 @inject TecnicoService tecnicoService
+@inject TiposTecnicoService tiposTecnicoService
 @inject NavigationManager navigation
 
-<PageTitle>Detalles del t&eacute;cnicos</PageTitle>
+<PageTitle>Detalles del t&eacute;cnico</PageTitle>
 <div class="container">
     <div class="card shadow-lg">
         @*Header*@
@@ -14,6 +16,7 @@
             <h5><strong>Estos son los detalles del t&eacute;cnico</strong></h5>
             @if (tecnico != null)
             {
+                @*Datos*@
                 <div class="mb-1">
                     <p class="mb-0">T&eacute;cnicoId: @tecnico.TecnicoId</p>
                 </div>
@@ -22,6 +25,9 @@
                 </div>
                 <div class="mb-1">
                     <p class="mb-0">Sueldo por hora: @tecnico.SueldoHora</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Tipo de t&eacute;cnico: @(ListaTipos.FirstOrDefault(t => t.TipoId == tecnico.TipoId)?.Descripcion ?? "No encontrado")</p>
                 </div>
             }
             else
@@ -39,16 +45,17 @@
 @code {
     [Parameter]
     public int tecnicosId { get; set; }
-    public Tecnicos tecnico;
+    public Tecnicos tecnico { get; set; } = new Tecnicos();
+    public List<TiposTecnicos> ListaTipos { get; set; } = new List<TiposTecnicos>();
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(500);
+        ListaTipos = await tiposTecnicoService.Listar(t => true);
         tecnico = await tecnicoService.Buscar(tecnicosId);
     }
 
     public void Volver()
     {
-        navigation.NavigateTo("/IndexTecnico");
+        navigation.NavigateTo("/Tecnico/Index");
     }
 }
