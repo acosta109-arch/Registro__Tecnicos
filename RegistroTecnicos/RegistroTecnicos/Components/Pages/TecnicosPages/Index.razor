@@ -58,7 +58,7 @@
                             <td>@tecnico.TecnicoId</td>
                             <td>@tecnico.Nombres</td>
                             <td>@tecnico.SueldoHora.ToString("N2")</td>
-                            <td>@(tipoTecnico?.Descripcion ?? "N/A")</td>
+                            <td>@(tipoTecnico?.Descripcion ?? "No encontrado")</td>
                             <td class="text-center">
                                 <a href="/Tecnico/Details/@tecnico.TecnicoId" class="btn btn-primary bi bi-binoculars-fill">  Detalles</a>
                             </td>
@@ -75,7 +75,6 @@
         </div>
     </div>
 </div>
-
 
 @code {
     public List<Tecnicos> tecnicos = new List<Tecnicos>();
